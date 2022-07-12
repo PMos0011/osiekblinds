@@ -18,8 +18,8 @@ public class Pi4jPinConfig {
                 .id("test-out")
                 .address(16)
                 .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
-                .provider("linuxfs-digital-output");
+                .initial(DigitalState.HIGH)
+                .provider("pigpio-digital-output");
 
         pi4j.create(led);
         return pi4j;
