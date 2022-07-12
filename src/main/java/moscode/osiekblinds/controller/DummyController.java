@@ -8,13 +8,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("dummy-test")
+@RequestMapping("test")
 public class DummyController {
 
     final private DummyService dummyService;
 
-    @GetMapping
-    public String getDummyData() {
-        return dummyService.getSomeData();
+    @GetMapping("/on")
+    public void turnOn() {
+        dummyService.turnOn();
+    }
+
+    @GetMapping("/off")
+    public void turnOff() {
+        dummyService.turnOff();
     }
 }

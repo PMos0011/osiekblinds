@@ -1,15 +1,30 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import axios from "axios";
 
 const DummyTest = () => {
-    const [message, setMessage] = useState('')
+    const [isEnabled, setIsEnabled] = useState(true)
+    const [message, setMessage] = useState('OK')
 
-    useEffect(() => {
-        axios.get("/dummy-test")
-            .then(response => setMessage(response.data))
+    const turnOn = () => {
+        setIsEnabled(false);
+        axios.get('test/on').then(() => setMessage('OK'))
             .catch(() => setMessage('dupa'))
-    }, [])
-    return <div>{message}</div>
+            .finally(() => setIsEnabled(true))
+    }
+    const turnOff = () => {
+        setIsEnabled(false);
+        axios.get('test/off').then(() => setMessage('OK'))
+            .catch(() => setMessage('dupa'))
+            .finally(() => setIsEnabled(true))
+    }
+
+    return (
+        <div>
+            <div>{message}</div>
+            <button disabled={!isEnabled} onClick={turnOn}>ON</button>
+            <button disabled={!isEnabled} onClick={turnOff}>OFF</button>
+        </div>
+    )
 }
 
 export default DummyTest
