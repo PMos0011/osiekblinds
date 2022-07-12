@@ -12,7 +12,7 @@ public class Pi4jPinConfig {
 
     @Bean
     public Context pi4j() {
-        System.setProperty("pi4j.library.path", "~");
+        System.setProperty("pi4j.library.path", "/home/pi");
         Context pi4j = Pi4J.newAutoContext();
 
         var led = DigitalOutput.newConfigBuilder(pi4j)
