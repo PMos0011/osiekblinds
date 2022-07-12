@@ -14,13 +14,14 @@ public class Pi4jPinConfig {
     public Context pi4j() {
         Context pi4j = Pi4J.newAutoContext();
 
-        DigitalOutput.newConfigBuilder(pi4j)
+        var led = DigitalOutput.newConfigBuilder(pi4j)
                 .id("test-out")
-                .name("My Test out")
                 .address(16)
                 .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW);
+                .initial(DigitalState.LOW)
+                .provider("linuxfs-digital-output");
 
+        pi4j.create(led);
         return pi4j;
     }
 }
