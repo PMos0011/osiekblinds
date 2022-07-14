@@ -4,7 +4,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIosNew';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import MovingLabel from './MovingLabel';
 
-const Row = styled.div<{ left?: boolean; color?: string }>`
+const Row = styled.div<{ left?: boolean }>`
   margin: 1vh auto;
   display: flex;
   flex-direction: row;
@@ -16,7 +16,6 @@ const Row = styled.div<{ left?: boolean; color?: string }>`
   border: solid 1px gray;
   border-radius: 8px;
   box-shadow: 0 20px 20px -14px rgba(0, 0, 0, 0.46);
-  background-color: ${(props) => (props.color ? props.color : 'floralwhite')};
   transition: 0.2s;
   overflow: hidden;
 
@@ -64,15 +63,11 @@ const BlindSelector = ({ label, doubleArrow }: Props) => {
   const [left, setLeft] = useState<boolean | undefined>(undefined);
   const [timeout, setButtonTimeout] = useState<any>();
   const [direction, setDirection] = useState<MoveDirection>(MoveDirection.WAITING);
-  const [color, setColor] = useState<string | undefined>(undefined);
+  const [isError, setIsError] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     if (direction) direction === MoveDirection.UP ? onUp() : onDown();
   }, [direction]);
-
-  useEffect(() => {
-    if (color) setTimeout(() => setColor(undefined), 500);
-  }, [color]);
 
   const buttonAnimation = (isLeft: boolean) => {
     clearTimeout(timeout);
@@ -89,22 +84,27 @@ const BlindSelector = ({ label, doubleArrow }: Props) => {
   };
 
   const onAction = (selectedDirection: MoveDirection) => {
-    if (direction === MoveDirection.WAITING) {
+    if (direction === MoveDirection.WAITING && isError === undefined) {
       setDirection(selectedDirection);
       // todo delete on request
       setTimeout(() => {
-        setColor('#C5FF00');
         setDirection(MoveDirection.WAITING);
-      }, 100);
+        setIsError(false);
+      }, 300);
     }
   };
 
   return (
-    <Row left={left} color={color}>
+    <Row left={left}>
       <ArrowContainer onClick={() => onAction(MoveDirection.UP)}>
         {doubleArrow ? <DoubleArrowUp /> : <ArrowUp />}
       </ArrowContainer>
-      <MovingLabel direction={direction} label={label.toUpperCase()} />
+      <MovingLabel
+        direction={direction}
+        label={label.toUpperCase()}
+        isError={isError}
+        clearError={() => setIsError(undefined)}
+      />
       <ArrowContainer onClick={() => onAction(MoveDirection.DOWN)}>
         {doubleArrow ? <DoubleArrowDown /> : <ArrowDown />}
       </ArrowContainer>

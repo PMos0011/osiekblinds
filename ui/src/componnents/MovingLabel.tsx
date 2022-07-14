@@ -22,6 +22,18 @@ const LabelContainer = styled.div<{ time: number; transition: number }>`
   transform: translateY(${(props) => props.transition}vh);
 `;
 
+const Overlay = styled.div<{ isError?: boolean }>`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transition: 0.5s;
+  background-color: ${(props) =>
+    props.isError === undefined ? 'floralwhite' : props.isError ? 'red' : '#c5ff00'};
+  z-index: 1;
+`;
+
 enum MovingState {
   LABEL_ON,
   LABEL_OFF,
@@ -32,9 +44,11 @@ enum MovingState {
 interface Props {
   label: string;
   direction: MoveDirection;
+  isError?: boolean;
+  clearError: () => void;
 }
 
-const MovingLabel = ({ label, direction }: Props) => {
+const MovingLabel = ({ label, direction, isError, clearError }: Props) => {
   const [transitionTime, setTransitionTime] = useState<number>(ANIMATION_TIME);
   const [labelPositions, setLabelPositions] = useState<number>(0);
   const [movingState, setMovingState] = useState<MovingState>(MovingState.LABEL_ON);
@@ -43,12 +57,12 @@ const MovingLabel = ({ label, direction }: Props) => {
   const [infoLabelPositions, setInfoLabelPositions] = useState<number>(OFFSET);
 
   useEffect(() => {
+    if (isError !== undefined) isError ? setInfoLabelMessage('ERROR') : setInfoLabelMessage('OK');
+  }, [isError]);
+
+  useEffect(() => {
     if (direction) beginAnimation();
-    else if (movingState === MovingState.BEFORE_RES) {
-      setInfoLabelPositions(0);
-      setTransitionTime(ANIMATION_TIME);
-      setTimeout(() => setMovingState(MovingState.RESULT), 500);
-    }
+    else if (movingState === MovingState.BEFORE_RES) endAnimation();
   }, [direction]);
 
   useEffect(() => {
@@ -65,7 +79,7 @@ const MovingLabel = ({ label, direction }: Props) => {
   useEffect(() => {
     if (!transitionTime) {
       setLabelPositions(labelPositions * -1);
-      setMovingState(MovingState.BEFORE_RES);
+      setTimeout(() => setMovingState(MovingState.BEFORE_RES), 50);
     }
   }, [transitionTime]);
 
@@ -73,12 +87,14 @@ const MovingLabel = ({ label, direction }: Props) => {
     switch (movingState) {
       case MovingState.LABEL_ON:
         if (infoTransitionTime) setTimeout(() => setInfoTransitionTime(0), DELAY);
+        if (isError !== undefined) setTimeout(() => clearError(), isError ? 3000 : 700);
         break;
       case MovingState.LABEL_OFF:
         setTransitionTime(0);
         break;
       case MovingState.BEFORE_RES:
         setInfoTransitionTime(ANIMATION_TIME);
+        if (!direction) endAnimation();
         break;
       case MovingState.RESULT:
         setInfoLabelPositions(labelPositions * -1);
@@ -87,12 +103,20 @@ const MovingLabel = ({ label, direction }: Props) => {
   }, [movingState]);
 
   const beginAnimation = () => {
+    clearError();
     direction === MoveDirection.UP ? setLabelPositions(-OFFSET) : setLabelPositions(OFFSET);
     setTimeout(() => setMovingState(MovingState.LABEL_OFF), DELAY);
   };
 
+  const endAnimation = () => {
+    setInfoLabelPositions(0);
+    setTransitionTime(ANIMATION_TIME);
+    setTimeout(() => setMovingState(MovingState.RESULT), DELAY);
+  };
+
   return (
     <>
+      <Overlay isError={isError} />
       <LabelContainer time={transitionTime} transition={labelPositions}>
         {label}
       </LabelContainer>
