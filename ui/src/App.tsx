@@ -1,20 +1,13 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import DummyTest from "./componnents/DummyTest";
+import DummyTest from './componnents/DummyTest';
 
-function App() {
-    return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo"/>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to reload.
-                </p>
-                <DummyTest/>
-            </header>
-        </div>
-    );
-}
+const App = () => {
+  return (
+    <div id={'app'} className="App">
+      <DummyTest />
+    </div>
+  );
+};
 
 export default App;
