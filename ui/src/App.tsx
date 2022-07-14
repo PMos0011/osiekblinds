@@ -1,12 +1,20 @@
 import React from 'react';
 import './App.css';
-import DummyTest from './componnents/DummyTest';
+import BlindsNavigation from './componnents/BlindsNavigation';
+import styled from 'styled-components';
+import fancy from './assets/bg.jpg';
+
+const Container = styled.div`
+  width: 100vw;
+  min-height: 100vh;
+  background-image: url(${fancy});
+`;
 
 const App = () => {
   return (
-    <div id={'app'} className="App">
-      <DummyTest />
-    </div>
+    <Container>
+      <BlindsNavigation />
+    </Container>
   );
 };
 

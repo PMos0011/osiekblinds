@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
-// @ts-ignore
 import Draggable from 'gsap/Draggable';
 import Scrollbar from 'smooth-scrollbar';
 import room1 from '../assets/room1.jpg';
