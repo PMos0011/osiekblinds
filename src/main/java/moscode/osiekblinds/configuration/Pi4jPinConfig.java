@@ -6,10 +6,12 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.Map;
 
 @Configuration
+@EnableAsync
 public class Pi4jPinConfig {
 
     public final static Map<String, Integer> outputs = Map.ofEntries(
@@ -47,7 +49,7 @@ public class Pi4jPinConfig {
         pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
                 .provider("pigpio-digital-output")
                 .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
+                .initial(DigitalState.HIGH)
                 .address(4)
                 .id("rel-power"));
 
