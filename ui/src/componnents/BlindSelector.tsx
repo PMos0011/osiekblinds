@@ -1,5 +1,6 @@
-import React, { createRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIosNew';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import MovingLabel from './MovingLabel';
@@ -56,10 +57,11 @@ export enum MoveDirection {
 
 interface Props {
   label: string;
+  id: number;
   doubleArrow?: boolean;
 }
 
-const BlindSelector = ({ label, doubleArrow }: Props) => {
+const BlindSelector = ({ label, id, doubleArrow }: Props) => {
   const [left, setLeft] = useState<boolean | undefined>(undefined);
   const [timeout, setButtonTimeout] = useState<any>();
   const [direction, setDirection] = useState<MoveDirection>(MoveDirection.WAITING);
@@ -77,20 +79,25 @@ const BlindSelector = ({ label, doubleArrow }: Props) => {
 
   const onUp = () => {
     buttonAnimation(true);
+    sendRequest('UP');
   };
 
   const onDown = () => {
+    sendRequest('DOWN');
     buttonAnimation(false);
+  };
+
+  const sendRequest = (direction: string) => {
+    axios
+      .post('/' + direction + '/' + id)
+      .then(() => setIsError(false))
+      .catch(() => setIsError(true))
+      .finally(() => setDirection(MoveDirection.WAITING));
   };
 
   const onAction = (selectedDirection: MoveDirection) => {
     if (direction === MoveDirection.WAITING && isError === undefined) {
       setDirection(selectedDirection);
-      // todo delete on request
-      setTimeout(() => {
-        setDirection(MoveDirection.WAITING);
-        setIsError(false);
-      }, 300);
     }
   };
 

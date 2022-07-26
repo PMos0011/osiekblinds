@@ -12,7 +12,7 @@ import java.util.Map;
 @Configuration
 public class Pi4jPinConfig {
 
-    public final static Map<String, Integer> outputs = Map.ofEntries(
+    private final static Map<String, Integer> outputs = Map.ofEntries(
             Map.entry("rel-u-0", 17),
             Map.entry("rel-d-0", 18),
             Map.entry("rel-u-1", 22),
@@ -30,7 +30,9 @@ public class Pi4jPinConfig {
             Map.entry("rel-u-7", 16),
             Map.entry("rel-d-7", 26),
             Map.entry("rel-u-8", 20),
-            Map.entry("rel-d-8", 21)
+            Map.entry("rel-d-8", 21),
+            Map.entry("rel-u-9", 27),
+            Map.entry("rel-d-9", 15)
     );
 
     @Bean
