@@ -13,6 +13,7 @@ public class BlindsService {
     private final Context pi4j;
     private final String RELAY_ID = "rel-%s-%d";
 
+    @Async
     public void activateRelay(int relayNumber, BlindDirection direction) {
         String relId = String.format(RELAY_ID, direction.getCode(), relayNumber);
         DigitalOutput out = pi4j.io(relId);
@@ -20,7 +21,6 @@ public class BlindsService {
         turnOff(out);
     }
 
-    @Async
     public void turnOff(DigitalOutput out) {
         try {
             Thread.sleep(5000);

@@ -6,12 +6,10 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.Map;
 
 @Configuration
-@EnableAsync
 public class Pi4jPinConfig {
 
     public final static Map<String, Integer> outputs = Map.ofEntries(
