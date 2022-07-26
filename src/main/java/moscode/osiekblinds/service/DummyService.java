@@ -27,9 +27,7 @@ public class DummyService {
     }
 
     public void turnOff() {
-        Pi4jPinConfig.outputs.forEach((relId, ignore) -> {
-            DigitalOutput out = pi4j.io(relId);
-            out.low();
-        });
+            DigitalOutput out = pi4j.io("rel-power");
+            out.toggle();
     }
 }
