@@ -27,7 +27,9 @@ public class DummyService {
     }
 
     public void turnOff() {
-            DigitalOutput out = pi4j.io("rel-power");
-            out.toggle();
+        DigitalOutput out = pi4j.io("rel-power");
+        out.toggle();
+        System.out.println(out.state());
+
     }
 }
