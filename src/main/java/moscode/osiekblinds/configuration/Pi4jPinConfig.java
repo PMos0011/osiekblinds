@@ -50,7 +50,7 @@ public class Pi4jPinConfig {
                 .provider("pigpio-digital-output")
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.HIGH)
-                .address(14)
+                .address(7)
                 .id("rel-power"));
 
         return pi4j;
