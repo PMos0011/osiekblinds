@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import BlindSelector from './BlindSelector';
+import blinds from '../tools/blinds';
 
 const Container = styled.div`
   display: flex;
@@ -13,16 +14,14 @@ const Container = styled.div`
 const BlindsNavigation = () => {
   return (
     <Container>
-      <BlindSelector label={'całość'} id={0} doubleArrow={true} />
-      <BlindSelector label={'salon lewa'} id={1} />
-      <BlindSelector label={'salon prawa'} id={2} />
-      <BlindSelector label={'kuchnia'} id={3} />
-      <BlindSelector label={'kotłownia'} id={4} />
-      <BlindSelector label={'sypialnia'} id={5} />
-      <BlindSelector label={'garderoba'} id={6} />
-      <BlindSelector label={'łazienka'} id={7} />
-      <BlindSelector label={'gabinet'} id={8} />
-      <BlindSelector label={'pokój'} id={9} />
+      {blinds.map((blind) => (
+        <BlindSelector
+          key={blind.id}
+          label={blind.name}
+          id={blind.id}
+          doubleArrow={blind.doubleArrow}
+        />
+      ))}
     </Container>
   );
 };

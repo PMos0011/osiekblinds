@@ -31,6 +31,7 @@ const ArrowContainer = styled.div`
   background-color: whitesmoke;
   border-radius: 5px;
   z-index: 2;
+  cursor: pointer;
 `;
 
 const ArrowUp = styled(ArrowBackIosIcon)`
