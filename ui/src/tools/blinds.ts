@@ -1,20 +1,32 @@
-interface Blind {
-  name: string;
+export interface Blind {
+  blindName: string;
   id: number;
-  doubleArrow?: boolean;
+  global: boolean;
 }
 
-const blinds: Blind[] = [
-  { name: 'Całość', id: 0, doubleArrow: true },
-  { name: 'Salon Lewa', id: 1 },
-  { name: 'Salon Prawa', id: 2 },
-  { name: 'Kuchnia', id: 3 },
-  { name: 'Kotłownia', id: 4 },
-  { name: 'Sypialnia', id: 5 },
-  { name: 'Garderoba', id: 6 },
-  { name: 'Łazienka', id: 7 },
-  { name: 'Gabinet', id: 8 },
-  { name: 'Pokój', id: 9 }
-];
+export interface Day {
+  id: number;
+  shortName: string;
+  dayName: string;
+}
 
-export default blinds;
+export interface ScheduledAction {
+  id?: number;
+  planName: string;
+  up: Date;
+  down: Date;
+  active: boolean;
+  blinds: Blind[];
+  days: Day[];
+}
+
+export const initSchedule = (): ScheduledAction => {
+  return {
+    planName: '',
+    up: new Date('2022-01-01T09:00:00'),
+    down: new Date('2022-01-01T21:00:00'),
+    blinds: [],
+    days: [],
+    active: true
+  };
+};

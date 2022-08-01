@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { WeekDaySelection } from '../tools/weekDays';
+import { Day, ScheduledAction } from '../tools/blinds';
 
 const Container = styled.div`
   margin-top: 2vh;
@@ -23,16 +23,20 @@ const DayWrapper = styled.div<{ isAdded: boolean }>`
 `;
 
 interface Props {
-  weekDays: WeekDaySelection[];
-  onDayClick: (name: string) => void;
+  weekDays: Day[];
+  item: ScheduledAction;
+  onDayClick: (day: Day) => void;
 }
 
-const DayPicker = ({ weekDays, onDayClick }: Props) => {
+const DayPicker = ({ weekDays, item, onDayClick }: Props) => {
   return (
     <Container>
-      {weekDays.map((day) => (
-        <DayWrapper onClick={() => onDayClick(day.name)} key={day.name} isAdded={day.isAdded}>
-          {day.name}
+      {weekDays.map((weekDay) => (
+        <DayWrapper
+          onClick={() => onDayClick(weekDay)}
+          key={weekDay.shortName}
+          isAdded={item.days.some((day) => day.shortName === weekDay.shortName)}>
+          {weekDay.shortName}
         </DayWrapper>
       ))}
     </Container>

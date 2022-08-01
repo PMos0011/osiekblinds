@@ -10,7 +10,7 @@ import {
 import ScheduleSwitch from './ScheduleSwitch';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { ScheduleDto } from '../tools/scheduledItem';
+import { ScheduledAction } from '../tools/blinds';
 
 const ColumnWrapper = styled.div`
   display: flex;
@@ -57,27 +57,30 @@ const StyledHR = styled.hr`
 `;
 
 interface Props {
-  item: ScheduleDto;
+  item: ScheduledAction;
+  toggleActivation: (id: number) => void;
+  onDelete: (id: number) => void;
+  onEdit: (item: ScheduledAction) => void;
 }
 
-const ScheduledItem = ({ item }: Props) => {
+const ScheduledItem = ({ item, toggleActivation, onDelete, onEdit }: Props) => {
   return (
     <Container>
       <NameWrapper>
         <ColumnWrapper>
-          {textLimit(item.value, 20)}
-          <TextWrapper>{textLimit(resolveSelectedBlinds(item.blindSelection), 40)}</TextWrapper>
+          {textLimit(item.planName, 20)}
+          <TextWrapper>{textLimit(resolveSelectedBlinds(item.blinds), 40)}</TextWrapper>
         </ColumnWrapper>
-        <ScheduleSwitch />
+        <ScheduleSwitch isEnabled={item.active} toggleEnabled={() => toggleActivation(item.id!)} />
       </NameWrapper>
       <SecWrapper>
         <ColumnWrapper>
-          <TextWrapper>{resolveSelectedDays(item.daySelection)}</TextWrapper>
+          <TextWrapper>{resolveSelectedDays(item.days)}</TextWrapper>
           <TextWrapper>{dateJoin(item.up, item.down)}</TextWrapper>
         </ColumnWrapper>
         <IconsWrapper>
-          <EditIcon />
-          <DeleteForeverIcon />
+          <EditIcon onClick={() => onEdit(item)} />
+          <DeleteForeverIcon onClick={() => onDelete(item.id!)} />
         </IconsWrapper>
       </SecWrapper>
       <StyledHR />

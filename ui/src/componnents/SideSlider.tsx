@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
 import MoreTimeIcon from '@mui/icons-material/MoreTime';
 import { fonts } from '../assets/fonts';
 import AddSchedule from './AddSchedule';
 import ScheduledItem from './ScheduledItem';
-import { initScheduleDto, ScheduleDto } from '../tools/scheduledItem';
+import { Blind, Day, initSchedule, ScheduledAction } from '../tools/blinds';
 
 const Container = styled.div<{ isOpen: boolean }>`
   display: flex;
@@ -83,14 +84,40 @@ const ItemsWrapper = styled.div<{ isOpen: boolean }>`
   opacity: ${(props) => (props.isOpen ? 1 : 0)};
 `;
 
-const SideSlider = () => {
-  const [tempItem, setTempItem] = useState<ScheduleDto | undefined>(undefined);
-  const [schedules, setSchedules] = useState<ScheduleDto[]>([]);
+interface Props {
+  blinds: Blind[];
+  days: Day[];
+}
+
+const SideSlider = ({ blinds, days }: Props) => {
+  const [tempItem, setTempItem] = useState<ScheduledAction | undefined>(undefined);
+  const [schedules, setSchedules] = useState<ScheduledAction[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    axios.get('/schedules').then((response) => setSchedules(response.data));
+  }, []);
 
   const toggleSidebar = () => {
     if (isOpen) setTempItem(undefined);
     setIsOpen(!isOpen);
+  };
+
+  const toggleActivate = (id: number) => {
+    axios.put('/toggle/' + id).then((response) => setSchedules(response.data));
+  };
+
+  const deleteAction = (id: number) => {
+    axios.delete('/delete/' + id).then((response) => setSchedules(response.data));
+  };
+
+  const onEdit = (item: ScheduledAction) => {
+    setTempItem(item);
+  };
+
+  const onSave = (item: ScheduledAction) => {
+    axios.post('/add', item).then((response) => setSchedules(response.data));
+    setTempItem(undefined);
   };
 
   return (
@@ -99,21 +126,24 @@ const SideSlider = () => {
         <HeaderWrapper>{'HARMONOGRAM'}</HeaderWrapper>
         <ItemsWrapper isOpen={isOpen}>
           {schedules.map((item) => (
-            <ScheduledItem key={item.id} item={item} />
+            <ScheduledItem
+              key={item.id}
+              item={item}
+              toggleActivation={toggleActivate}
+              onEdit={onEdit}
+              onDelete={deleteAction}
+            />
           ))}
         </ItemsWrapper>
         <AddIconWrapper>
-          <MoreTimeIcon
-            onClick={() => setTempItem(initScheduleDto())}
-            style={{ fontSize: '15vw' }}
-          />
+          <MoreTimeIcon onClick={() => setTempItem(initSchedule())} style={{ fontSize: '15vw' }} />
         </AddIconWrapper>
         <AddSchedule
+          blinds={blinds}
+          days={days}
           item={tempItem}
-          onSave={(item) => {
-            setTempItem(undefined);
-            setSchedules([...schedules, { ...item }]);
-          }}
+          onSave={onSave}
+          onCancel={() => setTempItem(undefined)}
         />
       </ContentWrapper>
       <ManageIconWrapper>

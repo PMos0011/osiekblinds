@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControlLabel, styled, Switch } from '@mui/material';
+import { styled, Switch } from '@mui/material';
 
 const StyledSwitch = styled(Switch)(({ theme }) => ({
   padding: 8,
@@ -35,13 +35,12 @@ const StyledSwitch = styled(Switch)(({ theme }) => ({
 }));
 
 interface Props {
-  id: number;
-  isActive: boolean;
-  toggleActive: () => void;
+  isEnabled: boolean;
+  toggleEnabled: () => void;
 }
 
-const ScheduleSwitch = () => {
-  return <FormControlLabel control={<StyledSwitch checked={true} />} label="" />;
+const ScheduleSwitch = ({ isEnabled, toggleEnabled }: Props) => {
+  return <StyledSwitch checked={isEnabled} onClick={toggleEnabled} />;
 };
 
 export default ScheduleSwitch;

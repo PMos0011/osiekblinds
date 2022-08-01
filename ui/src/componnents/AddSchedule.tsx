@@ -6,7 +6,7 @@ import BlindScheduleSelector from './BlindScheduleSelector';
 import TimePickers from './TimePickers';
 import DayPicker from './DayPicker';
 import NameInput from './NameInput';
-import { initScheduleDto, ScheduleDto } from '../tools/scheduledItem';
+import { Blind, Day, initSchedule, ScheduledAction } from '../tools/blinds';
 
 const AddContentWrapper = styled.div<{ isOpen: boolean }>`
   position: absolute;
@@ -29,14 +29,22 @@ const IconWrapper = styled.div`
   margin-bottom: 8vh;
 `;
 
+const AcceptIconWrapper = styled.div<{ isActive: boolean }>`
+  color: ${(props) => (props.isActive ? 'black' : 'lightgray')};
+  transition-duration: 0.5s;
+`;
+
 interface Props {
-  onSave: (item: ScheduleDto) => void;
-  item?: ScheduleDto;
+  blinds: Blind[];
+  days: Day[];
+  onSave: (item: ScheduledAction) => void;
+  onCancel: () => void;
+  item?: ScheduledAction;
 }
 
-const AddSchedule = ({ onSave, item }: Props) => {
+const AddSchedule = ({ blinds, days, onSave, onCancel, item }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [schedule, setSchedule] = useState<ScheduleDto>(initScheduleDto());
+  const [schedule, setSchedule] = useState<ScheduledAction>(initSchedule());
 
   useEffect(() => {
     if (item) {
@@ -45,34 +53,25 @@ const AddSchedule = ({ onSave, item }: Props) => {
     } else setIsOpen(false);
   }, [item]);
 
+  const canSave = () => {
+    return !!(schedule.days.length && schedule.blinds.length && schedule.planName.length);
+  };
+
   const onValueChange = (newValue: string) => {
-    setSchedule({ ...schedule, value: newValue });
+    setSchedule({ ...schedule, planName: newValue });
   };
 
-  const onBlindClick = (id: number) => {
-    const newBlindSelection = schedule.blindSelection.map((blind) => {
-      if (blind.id === id)
-        return {
-          ...blind,
-          isAdded: !blind.isAdded
-        };
-      else return { ...blind };
-    });
-
-    setSchedule({ ...schedule, blindSelection: newBlindSelection });
+  const onBlindClick = (selectedBlind: Blind) => {
+    const newBlinds = schedule.blinds.filter((blind) => blind.id !== selectedBlind.id);
+    if (newBlinds.length === schedule.blinds.length) newBlinds.push(selectedBlind);
+    setSchedule({ ...schedule, blinds: newBlinds });
   };
 
-  const onDayClick = (name: string) => {
-    const newDaySelection = schedule.daySelection.map((day) => {
-      if (day.name === name)
-        return {
-          ...day,
-          isAdded: !day.isAdded
-        };
-      else return { ...day };
-    });
+  const onDayClick = (selectedDay: Day) => {
+    const newDays = schedule.days.filter((day) => day.shortName !== selectedDay.shortName);
+    if (newDays.length === schedule.days.length) newDays.push(selectedDay);
 
-    setSchedule({ ...schedule, daySelection: newDaySelection });
+    setSchedule({ ...schedule, days: newDays });
   };
 
   const onUpSet = (up: Date) => {
@@ -83,21 +82,26 @@ const AddSchedule = ({ onSave, item }: Props) => {
     setSchedule({ ...schedule, down: down });
   };
 
+  const onSaveClick = () => {
+    if (canSave()) {
+      setIsOpen(false);
+      onSave(schedule);
+    }
+  };
+
   return (
     <AddContentWrapper isOpen={isOpen}>
-      <NameInput value={schedule.value} setValue={onValueChange} />
-      <BlindScheduleSelector onBlindClick={onBlindClick} blinds={schedule.blindSelection} />
-      <DayPicker onDayClick={onDayClick} weekDays={schedule.daySelection} />
+      <NameInput value={schedule.planName} setValue={onValueChange} />
+
+      <BlindScheduleSelector onBlindClick={onBlindClick} blinds={blinds} item={schedule} />
+      <DayPicker onDayClick={onDayClick} weekDays={days} item={schedule} />
+
       <TimePickers up={schedule.up} down={schedule.down} setUp={onUpSet} setDown={onDownSet} />
       <IconWrapper>
-        <AddTaskIcon
-          onClick={() => {
-            setIsOpen(false);
-            onSave(schedule);
-          }}
-          style={{ fontSize: '12vw' }}
-        />
-        <HighlightOffIcon onClick={() => setIsOpen(false)} style={{ fontSize: '12vw' }} />
+        <AcceptIconWrapper isActive={canSave()}>
+          <AddTaskIcon onClick={onSaveClick} style={{ fontSize: '12vw' }} />
+        </AcceptIconWrapper>
+        <HighlightOffIcon onClick={onCancel} style={{ fontSize: '12vw' }} />
       </IconWrapper>
     </AddContentWrapper>
   );

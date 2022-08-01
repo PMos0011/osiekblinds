@@ -3,7 +3,7 @@ import BlockIcon from '@mui/icons-material/Block';
 import AdjustIcon from '@mui/icons-material/Adjust';
 import styled from 'styled-components';
 import { fonts } from '../assets/fonts';
-import { BlindSelection } from '../tools/blindsInitState';
+import { Blind, ScheduledAction } from '../tools/blinds';
 
 const NameLabel = styled.div`
   font-family: ${fonts.main};
@@ -19,23 +19,26 @@ const NameWrapper = styled.div`
 `;
 
 interface Props {
-  blinds: BlindSelection[];
-  onBlindClick: (id: number) => void;
+  blinds: Blind[];
+  item: ScheduledAction;
+  onBlindClick: (blind: Blind) => void;
 }
 
-const BlindScheduleSelector = ({ blinds, onBlindClick }: Props) => {
+const BlindScheduleSelector = ({ blinds, item, onBlindClick }: Props) => {
   return (
     <>
-      {blinds.map((blind) => (
-        <NameWrapper key={blind.id} onClick={() => onBlindClick(blind.id)}>
-          <NameLabel> {blind.name.toUpperCase()} </NameLabel>
-          {blind.isAdded ? (
-            <AdjustIcon style={{ color: 'green' }} />
-          ) : (
-            <BlockIcon style={{ color: 'red' }} />
-          )}
-        </NameWrapper>
-      ))}
+      {blinds
+        .filter((blind) => !blind.global)
+        .map((blind) => (
+          <NameWrapper key={blind.id} onClick={() => onBlindClick(blind)}>
+            <NameLabel> {blind.blindName.toUpperCase()} </NameLabel>
+            {item.blinds.filter((itemBlind) => itemBlind.id === blind.id).length ? (
+              <AdjustIcon style={{ color: 'green' }} />
+            ) : (
+              <BlockIcon style={{ color: 'red' }} />
+            )}
+          </NameWrapper>
+        ))}
     </>
   );
 };

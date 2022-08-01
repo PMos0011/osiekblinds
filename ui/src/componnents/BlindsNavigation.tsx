@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import BlindSelector from './BlindSelector';
-import blinds from '../tools/blinds';
+import { Blind } from '../tools/blinds';
 
 const Container = styled.div`
   display: flex;
@@ -11,15 +11,19 @@ const Container = styled.div`
   height: 90vh;
 `;
 
-const BlindsNavigation = () => {
+interface Props {
+  blinds: Blind[];
+}
+
+const BlindsNavigation = ({ blinds }: Props) => {
   return (
     <Container>
       {blinds.map((blind) => (
         <BlindSelector
           key={blind.id}
-          label={blind.name}
+          label={blind.blindName}
           id={blind.id}
-          doubleArrow={blind.doubleArrow}
+          doubleArrow={blind.global}
         />
       ))}
     </Container>
