@@ -1,10 +1,10 @@
-insert into day_definitions (id, short_name, day_name) values (0, N'PN', N'Poniedziałek');
-insert into day_definitions (id, short_name, day_name) values (1, N'WT', N'Wtorek');
-insert into day_definitions (id, short_name, day_name) values (2, N'ŚR', N'Środa');
-insert into day_definitions (id, short_name, day_name) values (3, N'CZ', N'Czwartek');
-insert into day_definitions (id, short_name, day_name) values (4, N'PT', N'Piątek');
-insert into day_definitions (id, short_name, day_name) values (5, N'SO', N'Sobota');
-insert into day_definitions (id, short_name, day_name) values (6, N'NI', N'Niedziela');
+insert into day_definitions (id, short_name, day_name) values (1, N'PN', N'Poniedziałek');
+insert into day_definitions (id, short_name, day_name) values (2, N'WT', N'Wtorek');
+insert into day_definitions (id, short_name, day_name) values (3, N'ŚR', N'Środa');
+insert into day_definitions (id, short_name, day_name) values (4, N'CZ', N'Czwartek');
+insert into day_definitions (id, short_name, day_name) values (5, N'PT', N'Piątek');
+insert into day_definitions (id, short_name, day_name) values (6, N'SO', N'Sobota');
+insert into day_definitions (id, short_name, day_name) values (7, N'NI', N'Niedziela');
 
 insert into blinds_definitions (id, blind_name, global) values (0, N'Całość', 1);
 insert into blinds_definitions (id, blind_name, global) values (1, N'Salon Lewa', 0);

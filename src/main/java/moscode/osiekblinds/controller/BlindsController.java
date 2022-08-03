@@ -6,14 +6,12 @@ import moscode.osiekblinds.model.DayDefinition;
 import moscode.osiekblinds.model.ScheduleAction;
 import moscode.osiekblinds.service.BlindDirection;
 import moscode.osiekblinds.service.BlindsService;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@EnableAsync
 public class BlindsController {
 
     final private BlindsService blindsService;

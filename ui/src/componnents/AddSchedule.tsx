@@ -54,11 +54,19 @@ const AddSchedule = ({ blinds, days, onSave, onCancel, item }: Props) => {
   }, [item]);
 
   const canSave = () => {
-    return !!(schedule.days.length && schedule.blinds.length && schedule.planName.length);
+    return !!(
+      schedule.days.length &&
+      schedule.blinds.length &&
+      schedule.planName.length &&
+      schedule.up.toISOString() !== schedule.down.toISOString()
+    );
   };
 
   const onValueChange = (newValue: string) => {
-    setSchedule({ ...schedule, planName: newValue });
+    setSchedule({
+      ...schedule,
+      planName: newValue.length > 254 ? newValue.substring(0, 254) : newValue
+    });
   };
 
   const onBlindClick = (selectedBlind: Blind) => {

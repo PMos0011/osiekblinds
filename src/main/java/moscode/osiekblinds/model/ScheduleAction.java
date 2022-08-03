@@ -5,7 +5,6 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -15,7 +14,6 @@ public class ScheduleAction implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String planName;
     private Timestamp up;
     private Timestamp down;
