@@ -29,7 +29,7 @@ public class GPIOService {
         try {
             if (mutex.tryLock(PULSE_TIME + 200, TimeUnit.MILLISECONDS)) {
                 try {
-                    out.blink(PULSE_TIME, TimeUnit.MILLISECONDS);
+                    out.pulse(PULSE_TIME, TimeUnit.MILLISECONDS);
                 } finally {
                     mutex.unlock();
                 }
