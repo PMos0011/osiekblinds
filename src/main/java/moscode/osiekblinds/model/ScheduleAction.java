@@ -5,7 +5,7 @@ import lombok.Getter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -19,21 +19,21 @@ public class ScheduleAction implements Serializable {
     private Timestamp down;
     private boolean active;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "blind_schedule",
             joinColumns = @JoinColumn(name = "schedule_id"),
             inverseJoinColumns = @JoinColumn(name = "blind_id")
     )
-    private List<BlindDefinition> blinds;
+    private Set<BlindDefinition> blinds;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "day_schedule",
             joinColumns = @JoinColumn(name = "schedule_id"),
             inverseJoinColumns = @JoinColumn(name = "day_id")
     )
-    private List<DayDefinition> days;
+    private Set<DayDefinition> days;
 
     public void toggleActivity() {
         active = !active;

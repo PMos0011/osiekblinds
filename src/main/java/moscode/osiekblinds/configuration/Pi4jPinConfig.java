@@ -35,7 +35,7 @@ public class Pi4jPinConfig {
             Map.entry("rel-d-9", 20)
     );
 
-//    @Bean
+    @Bean
     public Context pi4j() {
         Context pi4j = Pi4J.newAutoContext();
 

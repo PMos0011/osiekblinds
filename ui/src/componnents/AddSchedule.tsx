@@ -58,7 +58,7 @@ const AddSchedule = ({ blinds, days, onSave, onCancel, item }: Props) => {
       schedule.days.length &&
       schedule.blinds.length &&
       schedule.planName.length &&
-      schedule.up.toISOString() !== schedule.down.toISOString()
+      new Date(schedule.up).toISOString() !== new Date(schedule.down).toISOString()
     );
   };
 
