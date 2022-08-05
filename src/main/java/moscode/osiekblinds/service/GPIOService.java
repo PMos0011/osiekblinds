@@ -6,39 +6,35 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+
 
 @Service
 @RequiredArgsConstructor
 public class GPIOService {
 
+    private final static int PULSE_TIME = 500;
     private final static String RELAY_ID = "rel-%s-%d";
     private final Context pi4j;
+    private final Map<Integer, ReentrantLock> mutexMap;
 
     @Async
     public void activate(int relayNumber, BlindDirection direction) {
         String relId = String.format(RELAY_ID, direction.getCode(), relayNumber);
-        String opposedRelId = String.format(RELAY_ID,
-                direction.equals(BlindDirection.UP) ? BlindDirection.DOWN.getCode() : BlindDirection.UP.getCode(),
-                relayNumber);
-
+        ReentrantLock mutex = mutexMap.get(relayNumber);
         DigitalOutput out = pi4j.io(relId);
-        DigitalOutput opposed = pi4j.io(opposedRelId);
 
-        long timestamp = System.currentTimeMillis() + 3000;
-        while (opposed.isHigh() && timestamp > System.currentTimeMillis()) {
-            sleep(100);
-        }
-
-        if (timestamp >= System.currentTimeMillis()) {
-            out.high();
-            sleep(500);
-            out.low();
-        }
-    }
-
-    private void sleep(int millis) {
         try {
-            Thread.sleep(millis);
+            if (mutex.tryLock(PULSE_TIME + 200, TimeUnit.MILLISECONDS)) {
+                try {
+                    out.blink(PULSE_TIME, TimeUnit.MILLISECONDS);
+                } finally {
+                    mutex.unlock();
+                }
+            } else
+                throw new RuntimeException("Relay lock error");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
