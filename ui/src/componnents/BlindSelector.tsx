@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIosNew';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import MovingLabel from './MovingLabel';
