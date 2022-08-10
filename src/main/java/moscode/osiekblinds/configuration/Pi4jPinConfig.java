@@ -2,12 +2,15 @@ package moscode.osiekblinds.configuration;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.gpio.digital.PullResistance;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
+import java.util.Properties;
 
 @Configuration
 public class Pi4jPinConfig {
@@ -52,6 +55,36 @@ public class Pi4jPinConfig {
                 .initial(DigitalState.HIGH)
                 .address(7)
                 .id("rel-power"));
+
+        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
+                .address(4)
+                .pull(PullResistance.PULL_DOWN)
+                .provider("pigpio-digital-input")
+                .id("input-4")
+                .build()).addListener(e -> {
+            if (e.state() == DigitalState.HIGH)
+                System.out.println("wysoki 4");
+        });
+
+        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
+                .address(15)
+                .pull(PullResistance.PULL_DOWN)
+                .provider("pigpio-digital-input")
+                .id("input-15")
+                .build()).addListener(e -> {
+            if (e.state() == DigitalState.HIGH)
+                System.out.println("wysoki 15");
+        });
+
+        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
+                .address(21)
+                .pull(PullResistance.PULL_DOWN)
+                .provider("pigpio-digital-input")
+                .id("input-21")
+                .build()).addListener(e -> {
+            if (e.state() == DigitalState.HIGH)
+                System.out.println("wysoki 21");
+        });
 
         return pi4j;
     }
