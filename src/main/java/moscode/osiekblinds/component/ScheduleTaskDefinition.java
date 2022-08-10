@@ -2,7 +2,7 @@ package moscode.osiekblinds.component;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import moscode.osiekblinds.model.BlindDefinition;
+import moscode.osiekblinds.model.Blind;
 import moscode.osiekblinds.model.ScheduleAction;
 import moscode.osiekblinds.service.BlindDirection;
 import moscode.osiekblinds.service.GPIOService;
@@ -30,7 +30,7 @@ public class ScheduleTaskDefinition implements Runnable {
                 String.format(CRON_PATTERN, executionTime.getMinute(), executionTime.getHour(), days),
                 direction,
                 action.getId(),
-                action.getBlinds().stream().map(BlindDefinition::getId).collect(Collectors.toList()),
+                action.getBlinds().stream().map(Blind::getId).collect(Collectors.toList()),
                 gpioService
         );
     }

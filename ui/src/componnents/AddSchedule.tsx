@@ -54,11 +54,13 @@ const AddSchedule = ({ blinds, days, onSave, onCancel, item }: Props) => {
   }, [item]);
 
   const canSave = () => {
+    const upConv = new Date(schedule.up);
+    const downConv = new Date(schedule.down);
     return !!(
       schedule.days.length &&
       schedule.blinds.length &&
       schedule.planName.length &&
-      new Date(schedule.up).toISOString() !== new Date(schedule.down).toISOString()
+      upConv.toISOString() !== downConv.toISOString()
     );
   };
 

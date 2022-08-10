@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import './App.css';
 import BlindsNavigation from './componnents/BlindsNavigation';
 import styled from 'styled-components';
 import fancy from './assets/bg.jpg';
 import SideSlider from './componnents/SideSlider';
-import { Blind, Day } from './tools/blinds';
+import { ContentProvider } from './componnents/ContentProvider';
 
 const Container = styled.div`
   width: 100vw;
@@ -14,19 +13,13 @@ const Container = styled.div`
 `;
 
 const App = () => {
-  const [blinds, setBlinds] = useState<Blind[]>([]);
-  const [days, setDays] = useState<Day[]>([]);
-
-  useEffect(() => {
-    axios.get('/blinds').then((response) => setBlinds(response.data));
-    axios.get('/days').then((response) => setDays(response.data));
-  }, []);
-
   return (
-    <Container>
-      <BlindsNavigation blinds={blinds} />
-      <SideSlider blinds={blinds} days={days} />
-    </Container>
+    <ContentProvider>
+      <Container>
+        <BlindsNavigation />
+        <SideSlider />
+      </Container>
+    </ContentProvider>
   );
 };
 

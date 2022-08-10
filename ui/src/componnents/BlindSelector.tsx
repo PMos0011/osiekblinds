@@ -4,14 +4,24 @@ import axios from 'axios';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIosNew';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import MovingLabel from './MovingLabel';
+import ProgressBar from './ProgressBar';
+import { useContent } from './ContentProvider';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  align-items: center;
+  justify-items: center;
+`;
 
 const Row = styled.div<{ left?: boolean }>`
   margin: 1vh auto;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 80%;
-  height: 9%;
+  width: 100%;
+  height: 60%;
   align-items: center;
   padding: 4px;
   border: solid 1px gray;
@@ -60,13 +70,15 @@ interface Props {
   label: string;
   id: number;
   doubleArrow?: boolean;
+  progress: number;
 }
 
-const BlindSelector = ({ label, id, doubleArrow }: Props) => {
+const BlindSelector = ({ label, id, doubleArrow, progress }: Props) => {
   const [left, setLeft] = useState<boolean | undefined>(undefined);
   const [timeout, setButtonTimeout] = useState<any>();
   const [direction, setDirection] = useState<MoveDirection>(MoveDirection.WAITING);
   const [isError, setIsError] = useState<boolean | undefined>(undefined);
+  const { enableBlind } = useContent();
 
   useEffect(() => {
     if (direction) direction === MoveDirection.UP ? onUp() : onDown();
@@ -89,11 +101,9 @@ const BlindSelector = ({ label, id, doubleArrow }: Props) => {
   };
 
   const sendRequest = (direction: string) => {
-    axios
-      .post('/' + direction + '/' + id)
-      .then(() => setIsError(false))
-      .catch(() => setIsError(true))
-      .finally(() => setDirection(MoveDirection.WAITING));
+    enableBlind({ direction: direction, id: id });
+    setIsError(false);
+    setDirection(MoveDirection.WAITING);
   };
 
   const onAction = (selectedDirection: MoveDirection) => {
@@ -103,20 +113,23 @@ const BlindSelector = ({ label, id, doubleArrow }: Props) => {
   };
 
   return (
-    <Row left={left}>
-      <ArrowContainer onClick={() => onAction(MoveDirection.UP)}>
-        {doubleArrow ? <DoubleArrowUp /> : <ArrowUp />}
-      </ArrowContainer>
-      <MovingLabel
-        direction={direction}
-        label={label.toUpperCase()}
-        isError={isError}
-        clearError={() => setIsError(undefined)}
-      />
-      <ArrowContainer onClick={() => onAction(MoveDirection.DOWN)}>
-        {doubleArrow ? <DoubleArrowDown /> : <ArrowDown />}
-      </ArrowContainer>
-    </Row>
+    <Container>
+      <Row left={left}>
+        <ArrowContainer onClick={() => onAction(MoveDirection.UP)}>
+          {doubleArrow ? <DoubleArrowUp /> : <ArrowUp />}
+        </ArrowContainer>
+        <MovingLabel
+          direction={direction}
+          label={label.toUpperCase()}
+          isError={isError}
+          clearError={() => setIsError(undefined)}
+        />
+        <ArrowContainer onClick={() => onAction(MoveDirection.DOWN)}>
+          {doubleArrow ? <DoubleArrowDown /> : <ArrowDown />}
+        </ArrowContainer>
+      </Row>
+      <ProgressBar progress={progress} />
+    </Container>
   );
 };
 

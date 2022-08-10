@@ -1,31 +1,41 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useContent } from './ContentProvider';
 import BlindSelector from './BlindSelector';
-import { Blind } from '../tools/blinds';
+import Spinner from './Spinner';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 5vh auto;
+  margin: 10vh auto;
   width: 90vw;
   height: 90vh;
 `;
 
-interface Props {
-  blinds: Blind[];
-}
+const SelectorContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
 
-const BlindsNavigation = ({ blinds }: Props) => {
+const BlindsNavigation = () => {
+  const { blinds, blindsState } = useContent();
   return (
     <Container>
-      {blinds.map((blind) => (
-        <BlindSelector
-          key={blind.id}
-          label={blind.blindName}
-          id={blind.id}
-          doubleArrow={blind.global}
-        />
-      ))}
+      {blinds.map((blind) => {
+        const state = blindsState.filter((state) => state.id === blind.id).at(0)!;
+        return (
+          <SelectorContainer key={blind.id}>
+            <Spinner moving={false} />
+            <BlindSelector
+              label={blind.blindName}
+              id={blind.id}
+              doubleArrow={blind.global}
+              progress={state.position}
+            />
+          </SelectorContainer>
+        );
+      })}
     </Container>
   );
 };

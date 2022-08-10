@@ -25,7 +25,7 @@ public class ScheduleAction implements Serializable {
             joinColumns = @JoinColumn(name = "schedule_id"),
             inverseJoinColumns = @JoinColumn(name = "blind_id")
     )
-    private Set<BlindDefinition> blinds;
+    private Set<Blind> blinds;
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(

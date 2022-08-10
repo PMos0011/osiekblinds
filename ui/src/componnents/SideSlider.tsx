@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import axios from 'axios';
 import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
 import MoreTimeIcon from '@mui/icons-material/MoreTime';
 import { fonts } from '../assets/fonts';
 import AddSchedule from './AddSchedule';
 import ScheduledItem from './ScheduledItem';
-import { Blind, Day, initSchedule, ScheduledAction } from '../tools/blinds';
+import { initSchedule, ScheduledAction } from '../tools/blinds';
+import { useContent } from './ContentProvider';
 
 const Container = styled.div<{ isOpen: boolean }>`
   display: flex;
@@ -84,31 +84,14 @@ const ItemsWrapper = styled.div<{ isOpen: boolean }>`
   opacity: ${(props) => (props.isOpen ? 1 : 0)};
 `;
 
-interface Props {
-  blinds: Blind[];
-  days: Day[];
-}
-
-const SideSlider = ({ blinds, days }: Props) => {
+const SideSlider = () => {
   const [tempItem, setTempItem] = useState<ScheduledAction | undefined>(undefined);
-  const [schedules, setSchedules] = useState<ScheduledAction[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    axios.get('/schedules').then((response) => setSchedules(response.data));
-  }, []);
+  const { blinds, days, schedules, toggleSchedule, deleteSchedule, saveSchedule } = useContent();
 
   const toggleSidebar = () => {
     if (isOpen) setTempItem(undefined);
     setIsOpen(!isOpen);
-  };
-
-  const toggleActivate = (id: number) => {
-    axios.put('/toggle/' + id).then((response) => setSchedules(response.data));
-  };
-
-  const deleteAction = (id: number) => {
-    axios.delete('/delete/' + id).then((response) => setSchedules(response.data));
   };
 
   const onEdit = (item: ScheduledAction) => {
@@ -116,7 +99,7 @@ const SideSlider = ({ blinds, days }: Props) => {
   };
 
   const onSave = (item: ScheduledAction) => {
-    axios.post('/add', item).then((response) => setSchedules(response.data));
+    saveSchedule(item);
     setTempItem(undefined);
   };
 
@@ -129,9 +112,9 @@ const SideSlider = ({ blinds, days }: Props) => {
             <ScheduledItem
               key={item.id}
               item={item}
-              toggleActivation={toggleActivate}
+              toggleActivation={toggleSchedule}
               onEdit={onEdit}
-              onDelete={deleteAction}
+              onDelete={deleteSchedule}
             />
           ))}
         </ItemsWrapper>

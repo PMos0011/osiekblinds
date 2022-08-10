@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
-import java.util.Properties;
 
 @Configuration
 public class Pi4jPinConfig {
@@ -61,30 +60,31 @@ public class Pi4jPinConfig {
                 .pull(PullResistance.PULL_DOWN)
                 .provider("pigpio-digital-input")
                 .id("input-4")
-                .build()).addListener(e -> {
-            if (e.state() == DigitalState.HIGH)
-                System.out.println("wysoki 4");
-        });
+                .build());
 
         pi4j.create(DigitalInput.newConfigBuilder(pi4j)
                 .address(15)
                 .pull(PullResistance.PULL_DOWN)
                 .provider("pigpio-digital-input")
                 .id("input-15")
-                .build()).addListener(e -> {
-            if (e.state() == DigitalState.HIGH)
-                System.out.println("wysoki 15");
-        });
+                .build());
 
         pi4j.create(DigitalInput.newConfigBuilder(pi4j)
                 .address(21)
                 .pull(PullResistance.PULL_DOWN)
                 .provider("pigpio-digital-input")
                 .id("input-21")
-                .build()).addListener(e -> {
-            if (e.state() == DigitalState.HIGH)
-                System.out.println("wysoki 21");
-        });
+                .build());
+
+//        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
+//                .address(21)
+//                .pull(PullResistance.PULL_DOWN)
+//                .provider("pigpio-digital-input")
+//                .id("input-21")
+//                .build()).addListener(e -> {
+//            if (e.state() == DigitalState.HIGH)
+//                System.out.println("wysoki 21");
+//        });
 
         return pi4j;
     }

@@ -1,3 +1,5 @@
+import { MoveDirection } from '../componnents/BlindSelector';
+
 export interface Blind {
   blindName: string;
   id: number;
@@ -10,6 +12,20 @@ export interface Day {
   dayName: string;
 }
 
+export interface BlindState {
+  id: number;
+  direction: MoveDirection;
+  position: number;
+  inMove: boolean;
+}
+
+export interface InitData {
+  days: Day[];
+  blinds: Blind[];
+  actions: ScheduledAction[];
+  blindState: BlindState[];
+}
+
 export interface ScheduledAction {
   id?: number;
   planName: string;
@@ -18,6 +34,11 @@ export interface ScheduledAction {
   active: boolean;
   blinds: Blind[];
   days: Day[];
+}
+
+export interface BindActionDto {
+  direction: string;
+  id: number;
 }
 
 export const initSchedule = (): ScheduledAction => {

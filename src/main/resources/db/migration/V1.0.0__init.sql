@@ -18,6 +18,9 @@ CREATE TABLE blinds_definitions
 (
     id         int          NOT NULL PRIMARY KEY,
     blind_name nvarchar(15) NOT NULL,
+    direction  varchar(4)   NOT NULL,
+    move_time  decimal      NOT NULL,
+    position   decimal      NOT NULL,
     global     tinyint      NOT NULL
 );
 
