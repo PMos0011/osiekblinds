@@ -22,7 +22,7 @@ interface Props {
 
 const ContentProvider = ({ children }: Props) => {
   const [stompClient, setStompClient] = useState<Client>(
-    over(new SockJS('http://192.168.0.110/ws'))
+    over(new SockJS('http://192.168.0.116/ws'))
   );
   const [blinds, setBlinds] = useState<Blind[]>([]);
   const [blindsState, setBlindsState] = useState<BlindState[]>([]);
