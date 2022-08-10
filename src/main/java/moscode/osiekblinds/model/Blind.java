@@ -18,4 +18,9 @@ public class Blind implements Serializable {
     private Integer moveTime;
     private Double position;
     private Boolean global;
+
+    public void updateState(BlindDirection direction, double position){
+        this.direction = direction;
+        this.position = position;
+    }
 }

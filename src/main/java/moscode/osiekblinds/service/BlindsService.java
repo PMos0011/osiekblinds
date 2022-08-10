@@ -120,7 +120,7 @@ public class BlindsService {
         BlindSateDto state = blindState.get(TEST_BLIND_ID);
         if (state.isInMove()) {
             calculatePosition();
-            sendState();
+            sendState(false);
         }
     }
 
@@ -218,7 +218,7 @@ public class BlindsService {
         state.setDirection(direction);
         calculatePosition();
 
-        sendState();
+        sendState(false);
         addDebugData();
     }
 
@@ -227,7 +227,7 @@ public class BlindsService {
         state.setInMove(false);
         calculatePosition();
 
-        sendState();
+        sendState(true);
         addDebugData();
     }
 
@@ -239,12 +239,19 @@ public class BlindsService {
         else
             state.setPosition(0);
 
-        sendState();
+        sendState(true);
         addDebugData();
     }
 
-    private void sendState() {
+    private void sendState(boolean save) {
         simpMessagingTemplate.convertAndSend("/blinds/state", blindState);
+
+        if (save) {
+            BlindSateDto state = blindState.get(TEST_BLIND_ID);
+            Blind blind = blindDefinitionRepository.getReferenceById(TEST_BLIND_ID);
+            blind.updateState(state.getDirection(), state.getPosition());
+            blindDefinitionRepository.save(blind);
+        }
     }
 
     private void calculatePosition() {
