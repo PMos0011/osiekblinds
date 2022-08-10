@@ -60,9 +60,9 @@ public class BlindsService {
         DigitalInput in4 = pi4j.io("input-4");
         in4.addListener(this::handleTopLed);
         DigitalInput in15 = pi4j.io("input-15");
-        in4.addListener(this::handleBottomLed);
+        in15.addListener(this::handleBottomLed);
         DigitalInput in21 = pi4j.io("input-21");
-        in4.addListener(this::handleEngine);
+        in21.addListener(this::handleEngine);
     }
 
     public InitDto getDefinitions() {
@@ -126,6 +126,7 @@ public class BlindsService {
     }
 
     private void handleTopLed(DigitalStateChangeEvent event) {
+        System.out.println("event test");
         if (event.source().id().equals("input-4")) {
             System.out.println("top triggered: " + event.state().getName());
             if (!topEnabled.equals(event.state())) {
