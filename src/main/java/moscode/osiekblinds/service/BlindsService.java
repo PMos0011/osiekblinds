@@ -21,7 +21,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -126,96 +125,89 @@ public class BlindsService {
     }
 
     private void handleTopLed(DigitalStateChangeEvent event) {
-        System.out.println("event test");
-        if (event.source().id().equals("input-4")) {
-            System.out.println("top triggered: " + event.state().getName());
-            if (!topEnabled.equals(event.state())) {
-                topEnabled = event.state();
+        System.out.println("top triggered: " + event.state().getName());
+        if (!topEnabled.equals(event.state())) {
+            topEnabled = event.state();
 
-                try {
-                    if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
-                        try {
-                            if (topEnabled.equals(DigitalState.HIGH) && engineEnabled.equals(DigitalState.HIGH)) {
-                                enginStartTime = Instant.now().getEpochSecond();
-                                startMove(BlindDirection.UP);
-                            }
-
-                            if (topEnabled.equals(DigitalState.LOW))
-                                stopMove();
-
-
-                        } finally {
-                            stateLock.unlock();
+            try {
+                if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
+                    try {
+                        if (topEnabled.equals(DigitalState.HIGH) && engineEnabled.equals(DigitalState.HIGH)) {
+                            enginStartTime = Instant.now().getEpochSecond();
+                            startMove(BlindDirection.UP);
                         }
-                    }
 
-                } catch (InterruptedException ie) {
-                    throw new RuntimeException(ie);
+                        if (topEnabled.equals(DigitalState.LOW))
+                            stopMove();
+
+
+                    } finally {
+                        stateLock.unlock();
+                    }
                 }
+
+            } catch (InterruptedException ie) {
+                throw new RuntimeException(ie);
             }
         }
     }
 
     private void handleBottomLed(DigitalStateChangeEvent event) {
-        if (event.source().id().equals("input-15")) {
-            System.out.println("bottom triggered: " + event.state().getName());
-            if (!bottomEnabled.equals(event.state())) {
-                bottomEnabled = event.state();
+        System.out.println("bottom triggered: " + event.state().getName());
+        if (!bottomEnabled.equals(event.state())) {
+            bottomEnabled = event.state();
 
-                try {
-                    if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
-                        try {
-                            if (bottomEnabled.equals(DigitalState.HIGH) && engineEnabled.equals(DigitalState.HIGH)) {
-                                enginStartTime = Instant.now().getEpochSecond();
-                                startMove(BlindDirection.DOWN);
-                            }
-
-                            if (bottomEnabled.equals(DigitalState.LOW))
-                                stopMove();
-
-
-                        } finally {
-                            stateLock.unlock();
+            try {
+                if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
+                    try {
+                        if (bottomEnabled.equals(DigitalState.HIGH) && engineEnabled.equals(DigitalState.HIGH)) {
+                            enginStartTime = Instant.now().getEpochSecond();
+                            startMove(BlindDirection.DOWN);
                         }
-                    }
 
-                } catch (InterruptedException ie) {
-                    throw new RuntimeException(ie);
+                        if (bottomEnabled.equals(DigitalState.LOW))
+                            stopMove();
+
+
+                    } finally {
+                        stateLock.unlock();
+                    }
                 }
+
+            } catch (InterruptedException ie) {
+                throw new RuntimeException(ie);
             }
         }
     }
 
     private void handleEngine(DigitalStateChangeEvent event) {
-        if (event.source().id().equals("input-21")) {
-            System.out.println("engine triggered: " + event.state().getName());
-            if (!engineEnabled.equals(event.state())) {
-                engineEnabled = event.state();
+        System.out.println("engine triggered: " + event.state().getName());
+        if (!engineEnabled.equals(event.state())) {
+            engineEnabled = event.state();
 
-                try {
-                    if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
-                        try {
-                            if (engineEnabled.equals(DigitalState.HIGH)) {
-                                enginStartTime = Instant.now().getEpochSecond();
+            try {
+                if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
+                    try {
+                        if (engineEnabled.equals(DigitalState.HIGH)) {
+                            enginStartTime = Instant.now().getEpochSecond();
 
-                                if (topEnabled.equals(DigitalState.HIGH))
-                                    startMove(BlindDirection.UP);
-                                else if (bottomEnabled.equals(DigitalState.HIGH))
-                                    startMove(BlindDirection.DOWN);
-                                else
-                                    addDebugData();
+                            if (topEnabled.equals(DigitalState.HIGH))
+                                startMove(BlindDirection.UP);
+                            else if (bottomEnabled.equals(DigitalState.HIGH))
+                                startMove(BlindDirection.DOWN);
+                            else
+                                addDebugData();
 
-                            } else
-                                stopAndResetPosition();
+                        } else
+                            stopAndResetPosition();
 
-                        } finally {
-                            stateLock.unlock();
-                        }
+                    } finally {
+                        stateLock.unlock();
                     }
-
-                } catch (InterruptedException ie) {
-                    throw new RuntimeException(ie);
                 }
+
+            } catch (InterruptedException ie) {
+                throw new RuntimeException(ie);
             }
         }
     }
@@ -251,7 +243,6 @@ public class BlindsService {
         addDebugData();
     }
 
-    @Transactional
     public void sendState(boolean save) {
         simpMessagingTemplate.convertAndSend("/blinds/state", blindState);
 
@@ -259,6 +250,7 @@ public class BlindsService {
             BlindSateDto state = blindState.get(TEST_BLIND_ID);
             Blind blind = blindDefinitionRepository.getReferenceById(TEST_BLIND_ID);
             blind.updateState(state.getDirection(), state.getPosition());
+            blindDefinitionRepository.save(blind);
         }
     }
 
