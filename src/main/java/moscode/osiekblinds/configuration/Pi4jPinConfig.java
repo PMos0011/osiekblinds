@@ -76,16 +76,6 @@ public class Pi4jPinConfig {
                 .id("input-21")
                 .build());
 
-//        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
-//                .address(21)
-//                .pull(PullResistance.PULL_DOWN)
-//                .provider("pigpio-digital-input")
-//                .id("input-21")
-//                .build()).addListener(e -> {
-//            if (e.state() == DigitalState.HIGH)
-//                System.out.println("wysoki 21");
-//        });
-
         return pi4j;
     }
 }

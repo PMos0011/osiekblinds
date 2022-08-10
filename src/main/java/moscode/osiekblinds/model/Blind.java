@@ -15,7 +15,7 @@ public class Blind implements Serializable {
     private String blindName;
     @Enumerated(EnumType.STRING)
     private BlindDirection direction;
-    private Double moveTime;
+    private Integer moveTime;
     private Double position;
     private Boolean global;
 }

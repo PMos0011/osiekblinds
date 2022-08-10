@@ -26,7 +26,7 @@ const BlindsNavigation = () => {
         const state = blindsState.filter((state) => state.id === blind.id).at(0)!;
         return (
           <SelectorContainer key={blind.id}>
-            <Spinner moving={false} />
+            <Spinner moving={state.inMove} />
             <BlindSelector
               label={blind.blindName}
               id={blind.id}

@@ -8,7 +8,7 @@ insert into day_definitions (id, short_name, day_name) values (7, N'NI', N'Niedz
 
 insert into blinds_definitions (id, blind_name, direction, move_time, position, global) values (0, N'Całość','UP', 0, 0, 1);
 insert into blinds_definitions (id, blind_name, direction, move_time, position, global) values (1, N'Salon Lewa','UP', 0, 0, 0);
-insert into blinds_definitions (id, blind_name, direction, move_time, position, global) values (2, N'Taras','UP', 0, 0, 0);
+insert into blinds_definitions (id, blind_name, direction, move_time, position, global) values (2, N'Taras','UP', 60, 0, 0);
 insert into blinds_definitions (id, blind_name, direction, move_time, position, global) values (3, N'Kuchnia','UP', 0, 0, 0);
 insert into blinds_definitions (id, blind_name, direction, move_time, position, global) values (4, N'Kotłownia','UP', 0, 0, 0);
 insert into blinds_definitions (id, blind_name, direction, move_time, position, global) values (5, N'Sypialnia','UP', 0, 0, 0);

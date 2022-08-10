@@ -1,31 +1,53 @@
 package moscode.osiekblinds.service;
 
+import com.pi4j.context.Context;
+import com.pi4j.io.gpio.digital.DigitalInput;
+import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.gpio.digital.DigitalStateChangeEvent;
 import lombok.RequiredArgsConstructor;
 import moscode.osiekblinds.model.Blind;
 import moscode.osiekblinds.model.DayDefinition;
+import moscode.osiekblinds.model.DebugData;
 import moscode.osiekblinds.model.ScheduleAction;
 import moscode.osiekblinds.model.dto.BlindDto;
 import moscode.osiekblinds.model.dto.BlindSateDto;
 import moscode.osiekblinds.model.dto.InitDto;
 import moscode.osiekblinds.repository.BlindDefinitionRepository;
 import moscode.osiekblinds.repository.DayDefinitionRepository;
+import moscode.osiekblinds.repository.DebugDataRepository;
 import moscode.osiekblinds.repository.ScheduleActionRepository;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class BlindsService {
 
+    private final int TEST_BLIND_ID = 2;
+
     private List<BlindSateDto> blindState;
+    private DigitalState topEnabled = DigitalState.LOW;
+    private DigitalState bottomEnabled = DigitalState.LOW;
+    private DigitalState engineEnabled = DigitalState.LOW;
+    private long enginStartTime = 0;
+    private final ReentrantLock stateLock = new ReentrantLock();
+    private final Context pi4j;
     private final GPIOService gpioService;
     private final BlindDefinitionRepository blindDefinitionRepository;
     private final DayDefinitionRepository dayDefinitionRepository;
     private final ScheduleActionRepository scheduleActionRepository;
+    private final DebugDataRepository debugDataRepository;
     private final ScheduleHandler scheduleHandler;
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
 
     @PostConstruct
     public void initState() {
@@ -33,6 +55,13 @@ public class BlindsService {
                 .stream()
                 .map(BlindSateDto::fromBlind)
                 .collect(Collectors.toList());
+
+        DigitalInput in4 = pi4j.io("input-4");
+        in4.addListener(e -> handleTopLed(e.state()));
+        DigitalInput in15 = pi4j.io("input-15");
+        in4.addListener(e -> handleBottomLed(e.state()));
+        DigitalInput in21 = pi4j.io("input-21");
+        in4.addListener(e -> handleEngine(e.state()));
     }
 
     public InitDto getDefinitions() {
@@ -84,5 +113,165 @@ public class BlindsService {
 
     public void activateRelay(int relayNumber, BlindDirection direction) {
         gpioService.activate(relayNumber, direction);
+    }
+
+    @Scheduled(fixedRate = 3000)
+    public void updateBlindState() {
+        BlindSateDto state = blindState.get(TEST_BLIND_ID);
+        if (state.isInMove()) {
+            calculatePosition();
+            sendState();
+        }
+    }
+
+    private void handleTopLed(DigitalState eventSate) {
+        System.out.println("top triggered: " + eventSate.getName());
+        if (!topEnabled.equals(eventSate)) {
+            topEnabled = eventSate;
+
+            try {
+                if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
+                    try {
+                        if (topEnabled.equals(DigitalState.HIGH) && engineEnabled.equals(DigitalState.HIGH)) {
+                            enginStartTime = Instant.now().getEpochSecond();
+                            startMove(BlindDirection.UP);
+                        }
+
+                        if (topEnabled.equals(DigitalState.LOW))
+                            stopMove();
+
+
+                    } finally {
+                        stateLock.unlock();
+                    }
+                }
+
+            } catch (InterruptedException ie) {
+                throw new RuntimeException(ie);
+            }
+        }
+    }
+
+    private void handleBottomLed(DigitalState eventSate) {
+        System.out.println("bottom triggered: " + eventSate.getName());
+        if (!bottomEnabled.equals(eventSate)) {
+            bottomEnabled = eventSate;
+
+            try {
+                if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
+                    try {
+                        if (bottomEnabled.equals(DigitalState.HIGH) && engineEnabled.equals(DigitalState.HIGH)) {
+                            enginStartTime = Instant.now().getEpochSecond();
+                            startMove(BlindDirection.DOWN);
+                        }
+
+                        if (bottomEnabled.equals(DigitalState.LOW))
+                            stopMove();
+
+
+                    } finally {
+                        stateLock.unlock();
+                    }
+                }
+
+            } catch (InterruptedException ie) {
+                throw new RuntimeException(ie);
+            }
+        }
+    }
+
+    private void handleEngine(DigitalState eventSate) {
+        System.out.println("engine triggered: " + eventSate.getName());
+        if (!engineEnabled.equals(eventSate)) {
+            engineEnabled = eventSate;
+
+            try {
+                if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
+                    try {
+                        if (engineEnabled.equals(DigitalState.HIGH)) {
+                            enginStartTime = Instant.now().getEpochSecond();
+
+                            if (topEnabled.equals(DigitalState.HIGH))
+                                startMove(BlindDirection.UP);
+                            else if (bottomEnabled.equals(DigitalState.HIGH))
+                                startMove(BlindDirection.DOWN);
+                            else
+                                addDebugData();
+
+                        } else
+                            stopAndResetPosition();
+
+                    } finally {
+                        stateLock.unlock();
+                    }
+                }
+
+            } catch (InterruptedException ie) {
+                throw new RuntimeException(ie);
+            }
+        }
+    }
+
+    private void startMove(BlindDirection direction) {
+        BlindSateDto state = blindState.get(TEST_BLIND_ID);
+        state.setInMove(true);
+        state.setDirection(direction);
+        calculatePosition();
+
+        sendState();
+        addDebugData();
+    }
+
+    private void stopMove() {
+        BlindSateDto state = blindState.get(TEST_BLIND_ID);
+        state.setInMove(false);
+        calculatePosition();
+
+        sendState();
+        addDebugData();
+    }
+
+    private void stopAndResetPosition() {
+        BlindSateDto state = blindState.get(TEST_BLIND_ID);
+        state.setInMove(false);
+        if (state.getDirection().equals(BlindDirection.UP))
+            state.setPosition(100);
+        else
+            state.setPosition(0);
+
+        sendState();
+        addDebugData();
+    }
+
+    private void sendState() {
+        simpMessagingTemplate.convertAndSend("/blinds/state", blindState);
+    }
+
+    private void calculatePosition() {
+        BlindSateDto state = blindState.get(TEST_BLIND_ID);
+        int workPeriod = (int) (Instant.now().getEpochSecond() - enginStartTime);
+        int position = workPeriod * 100 / state.getMoveTime();
+
+        double currentPosition = state.getDirection().equals(BlindDirection.UP)
+                ? state.getPosition() + position
+                : state.getPosition() - position;
+
+        if (currentPosition > 100)
+            currentPosition = 100;
+
+        if (currentPosition < 0)
+            currentPosition = 0;
+
+        state.setPosition(currentPosition);
+    }
+
+    private void addDebugData() {
+        debugDataRepository.save(
+                DebugData.builder()
+                        .enginState(engineEnabled)
+                        .topLed(topEnabled)
+                        .bottomLed(bottomEnabled)
+                        .build()
+        );
     }
 }

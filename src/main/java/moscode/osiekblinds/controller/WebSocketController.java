@@ -14,7 +14,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-public class TestSocketController {
+public class WebSocketController {
 
     private final BlindsService blindsService;
 
@@ -44,7 +44,6 @@ public class TestSocketController {
     }
 
     @MessageMapping("/blinds")
-    @SendTo("/blinds/state")
     public void blindsSate(@Payload BlindActivationDto action) {
         blindsService.activateRelay(action.getId(), action.getDirection());
     }

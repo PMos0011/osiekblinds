@@ -35,3 +35,12 @@ CREATE TABLE day_schedule
     schedule_id bigint NOT NULL,
     day_id      int    NOT NULL
 );
+
+CREATE TABLE blind_move_data
+(
+    id          bigint      NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    engin_state varchar(10) NOT NULL,
+    top_led     varchar(10) NOT NULL,
+    bottom_led  varchar(10) NOT NULL,
+    action_time timestamp   NOT NULL,
+)

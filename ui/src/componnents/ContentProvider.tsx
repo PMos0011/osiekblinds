@@ -47,6 +47,9 @@ const ContentProvider = ({ children }: Props) => {
           stompClient.send('/app/init');
 
           stompClient.subscribe('/schedules', (payload) => setSchedules(JSON.parse(payload.body)));
+          stompClient.subscribe('/blinds/state', (payload) =>
+            setBlindsState(JSON.parse(payload.body))
+          );
         },
         () => console.log('websocket error')
       );
