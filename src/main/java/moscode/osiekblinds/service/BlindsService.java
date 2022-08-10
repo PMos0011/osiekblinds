@@ -37,7 +37,7 @@ public class BlindsService {
     private DigitalState topEnabled = DigitalState.LOW;
     private DigitalState bottomEnabled = DigitalState.LOW;
     private DigitalState engineEnabled = DigitalState.LOW;
-    private long enginStartTime = 0;
+    private long tickTime = 0;
     private final ReentrantLock stateLock = new ReentrantLock();
     private final Context pi4j;
     private final GPIOService gpioService;
@@ -133,7 +133,7 @@ public class BlindsService {
                 if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
                     try {
                         if (topEnabled.equals(DigitalState.HIGH) && engineEnabled.equals(DigitalState.HIGH)) {
-                            enginStartTime = Instant.now().getEpochSecond();
+                            tickTime = Instant.now().getEpochSecond();
                             startMove(BlindDirection.UP);
                         }
 
@@ -161,7 +161,7 @@ public class BlindsService {
                 if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
                     try {
                         if (bottomEnabled.equals(DigitalState.HIGH) && engineEnabled.equals(DigitalState.HIGH)) {
-                            enginStartTime = Instant.now().getEpochSecond();
+                            tickTime = Instant.now().getEpochSecond();
                             startMove(BlindDirection.DOWN);
                         }
 
@@ -189,7 +189,7 @@ public class BlindsService {
                 if (stateLock.tryLock(200, TimeUnit.MILLISECONDS)) {
                     try {
                         if (engineEnabled.equals(DigitalState.HIGH)) {
-                            enginStartTime = Instant.now().getEpochSecond();
+                            tickTime = Instant.now().getEpochSecond();
 
                             if (topEnabled.equals(DigitalState.HIGH))
                                 startMove(BlindDirection.UP);
@@ -248,15 +248,18 @@ public class BlindsService {
 
         if (save) {
             BlindSateDto state = blindState.get(TEST_BLIND_ID);
-            Blind blind = blindDefinitionRepository.getReferenceById(TEST_BLIND_ID);
-            blind.updateState(state.getDirection(), state.getPosition());
-            blindDefinitionRepository.save(blind);
+            blindDefinitionRepository.findById(TEST_BLIND_ID).ifPresent(blind -> {
+                blind.updateState(state.getDirection(), state.getPosition());
+                blindDefinitionRepository.save(blind);
+            });
         }
     }
 
     private void calculatePosition() {
         BlindSateDto state = blindState.get(TEST_BLIND_ID);
-        int workPeriod = (int) (Instant.now().getEpochSecond() - enginStartTime);
+        int workPeriod = (int) (Instant.now().getEpochSecond() - tickTime);
+        tickTime = Instant.now().getEpochSecond();
+
         int position = workPeriod * 100 / state.getMoveTime();
 
         double currentPosition = state.getDirection().equals(BlindDirection.UP)
