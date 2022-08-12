@@ -10,7 +10,7 @@ const OFFSET = 5;
 const LabelContainer = styled.div<{ time: number; transition: number }>`
   font-family: ${fonts.main};
   position: absolute;
-  transition: ${(props) => props.time}s;
+  transition: transform ${(props) => props.time}s ease-in-out;
   color: #2c2a25;
   left: 0;
   right: 0;
@@ -19,6 +19,7 @@ const LabelContainer = styled.div<{ time: number; transition: number }>`
   z-index: 1;
   width: 65%;
   text-align: center;
+  opacity: ${(props) => (props.time !== 0 ? 1 : 0)};
   transform: translateY(${(props) => props.transition}vh);
 `;
 

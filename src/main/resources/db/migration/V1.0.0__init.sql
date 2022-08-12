@@ -42,5 +42,6 @@ CREATE TABLE blind_move_data
     engin_state varchar(10) NOT NULL,
     top_led     varchar(10) NOT NULL,
     bottom_led  varchar(10) NOT NULL,
+    position   decimal      NOT NULL,
     action_time timestamp   NOT NULL
 )

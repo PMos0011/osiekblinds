@@ -14,7 +14,7 @@ public class BlindSateDto {
     private BlindDirection direction;
     private double position;
     private boolean inMove;
-    private int moveTime;
+    private long moveTime;
 
     public static BlindSateDto fromBlind(Blind blind) {
         return new BlindSateDto(

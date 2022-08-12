@@ -26,6 +26,7 @@ public class DebugData {
     private DigitalState topLed;
     @Enumerated(EnumType.STRING)
     private DigitalState bottomLed;
+    private Double position;
     @CreationTimestamp
     private LocalDateTime actionTime;
 
