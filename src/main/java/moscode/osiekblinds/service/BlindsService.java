@@ -234,6 +234,7 @@ public class BlindsService {
         else
             calculatePosition();
 
+        stopEngineTime = 0;
         sendState(true);
     }
 
