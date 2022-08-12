@@ -16,6 +16,7 @@ import moscode.osiekblinds.repository.BlindDefinitionRepository;
 import moscode.osiekblinds.repository.DayDefinitionRepository;
 import moscode.osiekblinds.repository.DebugDataRepository;
 import moscode.osiekblinds.repository.ScheduleActionRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BlindsService {
 
-    private final int TEST_BLIND_ID = 2;
+    @Value( "${app.testblind}" )
+    private int TEST_BLIND_ID;
 
     private List<BlindSateDto> blindState;
     private DigitalState topEnabled = DigitalState.LOW;
