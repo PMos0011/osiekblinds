@@ -63,10 +63,10 @@ public class Pi4jPinConfig {
                 .build());
 
         pi4j.create(DigitalInput.newConfigBuilder(pi4j)
-                .address(15)
+                .address(14)
                 .pull(PullResistance.PULL_DOWN)
                 .provider("pigpio-digital-input")
-                .id("input-15")
+                .id("input-14")
                 .build());
 
         pi4j.create(DigitalInput.newConfigBuilder(pi4j)

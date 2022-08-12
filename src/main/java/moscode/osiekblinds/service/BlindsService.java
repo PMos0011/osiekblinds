@@ -58,7 +58,7 @@ public class BlindsService {
 
         DigitalInput in4 = pi4j.io("input-4");
         in4.addListener(this::handleTopLed);
-        DigitalInput in15 = pi4j.io("input-15");
+        DigitalInput in15 = pi4j.io("input-14");
         in15.addListener(this::handleBottomLed);
         DigitalInput in21 = pi4j.io("input-21");
         in21.addListener(this::handleEngine);
