@@ -55,26 +55,26 @@ public class Pi4jPinConfig {
                 .address(7)
                 .id("rel-power"));
 
-        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
-                .address(4)
-                .pull(PullResistance.PULL_DOWN)
-                .provider("pigpio-digital-input")
-                .id("input-4")
-                .build());
-
-        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
-                .address(14)
-                .pull(PullResistance.PULL_DOWN)
-                .provider("pigpio-digital-input")
-                .id("input-14")
-                .build());
-
-        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
-                .address(21)
-                .pull(PullResistance.PULL_DOWN)
-                .provider("pigpio-digital-input")
-                .id("input-21")
-                .build());
+//        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
+//                .address(4)
+//                .pull(PullResistance.PULL_DOWN)
+//                .provider("pigpio-digital-input")
+//                .id("input-4")
+//                .build());
+//
+//        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
+//                .address(14)
+//                .pull(PullResistance.PULL_DOWN)
+//                .provider("pigpio-digital-input")
+//                .id("input-14")
+//                .build());
+//
+//        pi4j.create(DigitalInput.newConfigBuilder(pi4j)
+//                .address(21)
+//                .pull(PullResistance.PULL_DOWN)
+//                .provider("pigpio-digital-input")
+//                .id("input-21")
+//                .build());
 
         return pi4j;
     }
