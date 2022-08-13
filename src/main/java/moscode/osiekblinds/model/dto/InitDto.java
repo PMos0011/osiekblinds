@@ -14,5 +14,4 @@ public class InitDto {
     private final List<DayDefinition> days;
     private final List<BlindDto> blinds;
     private final List<ScheduleAction> actions;
-    private final List<BlindSateDto> blindState;
 }

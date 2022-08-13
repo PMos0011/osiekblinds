@@ -1,5 +1,5 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
-import { BindActionDto, Blind, BlindState, Day, InitData, ScheduledAction } from '../tools/blinds';
+import { BindActionDto, Blind, Day, InitData, ScheduledAction } from '../tools/blinds';
 import { Client, over } from 'stompjs';
 import SockJS from 'sockjs-client';
 
@@ -7,7 +7,6 @@ interface ContentProviderType {
   blinds: Blind[];
   days: Day[];
   schedules: ScheduledAction[];
-  blindsState: BlindState[];
   toggleSchedule: (id: number) => void;
   deleteSchedule: (id: number) => void;
   saveSchedule: (action: ScheduledAction) => void;
@@ -25,7 +24,6 @@ const ContentProvider = ({ children }: Props) => {
     over(new SockJS('http://192.168.1.50/ws'))
   );
   const [blinds, setBlinds] = useState<Blind[]>([]);
-  const [blindsState, setBlindsState] = useState<BlindState[]>([]);
   const [days, setDays] = useState<Day[]>([]);
   const [schedules, setSchedules] = useState<ScheduledAction[]>([]);
 
@@ -41,15 +39,11 @@ const ContentProvider = ({ children }: Props) => {
             setBlinds(initData.blinds);
             setDays(initData.days);
             setSchedules(initData.actions);
-            setBlindsState(initData.blindState);
           });
 
           stompClient.send('/app/init');
 
           stompClient.subscribe('/schedules', (payload) => setSchedules(JSON.parse(payload.body)));
-          stompClient.subscribe('/blinds/state', (payload) =>
-            setBlindsState(JSON.parse(payload.body))
-          );
         },
         () => console.log('websocket error')
       );
@@ -75,7 +69,6 @@ const ContentProvider = ({ children }: Props) => {
         blinds,
         days,
         schedules,
-        blindsState,
         toggleSchedule,
         deleteSchedule,
         saveSchedule,

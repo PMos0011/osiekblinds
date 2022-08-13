@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { useContent } from './ContentProvider';
 import BlindSelector from './BlindSelector';
-import Spinner from './Spinner';
 
 const Container = styled.div`
   display: flex;
@@ -19,20 +18,13 @@ const SelectorContainer = styled.div`
 `;
 
 const BlindsNavigation = () => {
-  const { blinds, blindsState } = useContent();
+  const { blinds } = useContent();
   return (
     <Container>
       {blinds.map((blind) => {
-        const state = blindsState.filter((state) => state.id === blind.id).at(0)!;
         return (
           <SelectorContainer key={blind.id}>
-            <Spinner moving={state.inMove} />
-            <BlindSelector
-              label={blind.blindName}
-              id={blind.id}
-              doubleArrow={blind.global}
-              progress={state.position}
-            />
+            <BlindSelector label={blind.blindName} id={blind.id} doubleArrow={blind.global} />
           </SelectorContainer>
         );
       })}

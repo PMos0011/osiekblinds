@@ -3,23 +3,14 @@ import styled from 'styled-components';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIosNew';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import MovingLabel from './MovingLabel';
-import ProgressBar from './ProgressBar';
 import { useContent } from './ContentProvider';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 80%;
-  align-items: center;
-  justify-items: center;
-`;
 
 const Row = styled.div<{ left?: boolean }>`
   margin: 1vh auto;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  width: 100%;
+  width: 80%;
   height: 60%;
   align-items: center;
   padding: 4px;
@@ -69,10 +60,9 @@ interface Props {
   label: string;
   id: number;
   doubleArrow?: boolean;
-  progress: number;
 }
 
-const BlindSelector = ({ label, id, doubleArrow, progress }: Props) => {
+const BlindSelector = ({ label, id, doubleArrow }: Props) => {
   const [left, setLeft] = useState<boolean | undefined>(undefined);
   const [timeout, setButtonTimeout] = useState<any>();
   const [direction, setDirection] = useState<MoveDirection>(MoveDirection.WAITING);
@@ -112,23 +102,20 @@ const BlindSelector = ({ label, id, doubleArrow, progress }: Props) => {
   };
 
   return (
-    <Container>
-      <Row left={left}>
-        <ArrowContainer onClick={() => onAction(MoveDirection.UP)}>
-          {doubleArrow ? <DoubleArrowUp /> : <ArrowUp />}
-        </ArrowContainer>
-        <MovingLabel
-          direction={direction}
-          label={label.toUpperCase()}
-          isError={isError}
-          clearError={() => setIsError(undefined)}
-        />
-        <ArrowContainer onClick={() => onAction(MoveDirection.DOWN)}>
-          {doubleArrow ? <DoubleArrowDown /> : <ArrowDown />}
-        </ArrowContainer>
-      </Row>
-      <ProgressBar progress={progress} />
-    </Container>
+    <Row left={left}>
+      <ArrowContainer onClick={() => onAction(MoveDirection.UP)}>
+        {doubleArrow ? <DoubleArrowUp /> : <ArrowUp />}
+      </ArrowContainer>
+      <MovingLabel
+        direction={direction}
+        label={label.toUpperCase()}
+        isError={isError}
+        clearError={() => setIsError(undefined)}
+      />
+      <ArrowContainer onClick={() => onAction(MoveDirection.DOWN)}>
+        {doubleArrow ? <DoubleArrowDown /> : <ArrowDown />}
+      </ArrowContainer>
+    </Row>
   );
 };
 

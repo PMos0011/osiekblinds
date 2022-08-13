@@ -5,14 +5,12 @@ import moscode.osiekblinds.model.Blind;
 import moscode.osiekblinds.model.DayDefinition;
 import moscode.osiekblinds.model.ScheduleAction;
 import moscode.osiekblinds.model.dto.BlindDto;
-import moscode.osiekblinds.model.dto.BlindSateDto;
 import moscode.osiekblinds.model.dto.InitDto;
 import moscode.osiekblinds.repository.BlindDefinitionRepository;
 import moscode.osiekblinds.repository.DayDefinitionRepository;
 import moscode.osiekblinds.repository.ScheduleActionRepository;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BlindsService {
 
-    private List<BlindSateDto> blindState;
     private final GPIOService gpioService;
     private final BlindDefinitionRepository blindDefinitionRepository;
     private final DayDefinitionRepository dayDefinitionRepository;
@@ -28,20 +25,11 @@ public class BlindsService {
     private final ScheduleHandler scheduleHandler;
 
 
-    @PostConstruct
-    public void initState() {
-        blindState = blindDefinitionRepository.findAll()
-                .stream()
-                .map(BlindSateDto::fromBlind)
-                .collect(Collectors.toList());
-    }
-
     public InitDto getDefinitions() {
         return new InitDto(
                 dayDefinitionRepository.findAll(),
                 blindDefinitionRepository.findAll().stream().map(BlindDto::fromBlind).collect(Collectors.toList()),
-                scheduleActionRepository.findAll(),
-                blindState
+                scheduleActionRepository.findAll()
         );
     }
 
