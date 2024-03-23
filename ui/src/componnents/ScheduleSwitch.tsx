@@ -37,10 +37,11 @@ const StyledSwitch = styled(Switch)(({ theme }) => ({
 interface Props {
   isEnabled: boolean;
   toggleEnabled: () => void;
+  disabled?: boolean;
 }
 
-const ScheduleSwitch = ({ isEnabled, toggleEnabled }: Props) => {
-  return <StyledSwitch checked={isEnabled} onClick={toggleEnabled} />;
+const ScheduleSwitch = ({ isEnabled, toggleEnabled, disabled }: Props) => {
+  return <StyledSwitch disabled={disabled} checked={isEnabled} onClick={toggleEnabled} />;
 };
 
 export default ScheduleSwitch;

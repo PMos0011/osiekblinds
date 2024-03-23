@@ -41,6 +41,12 @@ export interface BindActionDto {
   id: number;
 }
 
+export interface Servo {
+  id: number;
+  value: number;
+  linear: boolean;
+}
+
 export const initSchedule = (): ScheduledAction => {
   return {
     planName: '',

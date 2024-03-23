@@ -1,18 +1,14 @@
-import React, { useState } from 'react';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import ManageHistoryIcon from '@mui/icons-material/ManageHistory';
-import MoreTimeIcon from '@mui/icons-material/MoreTime';
-import { fonts } from '../assets/fonts';
-import AddSchedule from './AddSchedule';
-import ScheduledItem from './ScheduledItem';
-import { initSchedule, ScheduledAction } from '../tools/blinds';
-import { useContent } from './ContentProvider';
+import AcUnitIcon from '@mui/icons-material/AcUnit';
 
-const Container = styled.div<{ isOpen: boolean }>`
+const Container = styled.div<{ isOpen: boolean; secondOpen: boolean }>`
   display: flex;
   position: fixed;
   top: 0;
   left: 0;
+  transform: translateX(${({ secondOpen }) => (secondOpen ? -60 : 0)}px);
   width: ${(props) => (props.isOpen ? 90 : 1)}%;
   height: 100%;
   background-color: whitesmoke;
@@ -23,8 +19,8 @@ const Container = styled.div<{ isOpen: boolean }>`
   transition-delay: ${(props) => (props.isOpen ? 0 : 0.3)}s;
 `;
 
-const ManageIconWrapper = styled.div`
-  margin-top: 10px;
+const ManageIconWrapper = styled.div<{ bottom: boolean }>`
+  margin-top: ${({ bottom }) => (bottom ? '70px' : '10px')};
   margin-left: auto;
   margin-right: -20px;
   display: flex;
@@ -59,81 +55,30 @@ const ContentWrapper = styled.div`
   align-items: center;
 `;
 
-const HeaderWrapper = styled.div`
-  font-family: ${fonts.main};
-  font-size: 6vw;
-  margin-top: 5%;
-  margin-bottom: 3vh;
-`;
+interface Props {
+  children: ReactNode;
+  isOpen: boolean;
+  secondOpen: boolean;
+  toggleSidebar: () => void;
+  type: 'SCHEDULE' | 'AC';
+}
 
-const AddIconWrapper = styled.div`
-  display: flex;
-  margin-top: auto;
-  margin-bottom: 10%;
-`;
-
-const ItemsWrapper = styled.div<{ isOpen: boolean }>`
-  margin-left: 5vw;
-  width: 100%;
-  display: flex;
-  overflow: auto;
-  flex-direction: column;
-  height: 70%;
-  transition-duration: 0.3s;
-  transition-delay: ${(props) => (props.isOpen ? 0.4 : 0)}s;
-  opacity: ${(props) => (props.isOpen ? 1 : 0)};
-`;
-
-const SideSlider = () => {
-  const [tempItem, setTempItem] = useState<ScheduledAction | undefined>(undefined);
-  const [isOpen, setIsOpen] = useState(false);
-  const { blinds, days, schedules, toggleSchedule, deleteSchedule, saveSchedule } = useContent();
-
-  const toggleSidebar = () => {
-    if (isOpen) setTempItem(undefined);
-    setIsOpen(!isOpen);
-  };
-
-  const onEdit = (item: ScheduledAction) => {
-    setTempItem(item);
-  };
-
-  const onSave = (item: ScheduledAction) => {
-    saveSchedule(item);
-    setTempItem(undefined);
-  };
-
+const SideSlider = ({ children, isOpen, secondOpen, toggleSidebar, type }: Props) => {
   return (
-    <Container isOpen={isOpen}>
-      <ContentWrapper>
-        <HeaderWrapper>{'HARMONOGRAM'}</HeaderWrapper>
-        <ItemsWrapper isOpen={isOpen}>
-          {schedules.map((item) => (
-            <ScheduledItem
-              key={item.id}
-              item={item}
-              toggleActivation={toggleSchedule}
-              onEdit={onEdit}
-              onDelete={deleteSchedule}
-            />
-          ))}
-        </ItemsWrapper>
-        <AddIconWrapper>
-          <MoreTimeIcon onClick={() => setTempItem(initSchedule())} style={{ fontSize: '15vw' }} />
-        </AddIconWrapper>
-        <AddSchedule
-          blinds={blinds}
-          days={days}
-          item={tempItem}
-          onSave={onSave}
-          onCancel={() => setTempItem(undefined)}
-        />
-      </ContentWrapper>
-      <ManageIconWrapper>
-        <ManageHistoryIcon
-          onClick={toggleSidebar}
-          style={{ margin: '8px', zIndex: 25, cursor: 'pointer' }}
-        />
+    <Container isOpen={isOpen} secondOpen={secondOpen}>
+      <ContentWrapper>{children}</ContentWrapper>
+      <ManageIconWrapper bottom={type === 'AC'}>
+        {type === 'SCHEDULE' ? (
+          <ManageHistoryIcon
+            onClick={toggleSidebar}
+            style={{ margin: '8px', zIndex: 25, cursor: 'pointer' }}
+          />
+        ) : (
+          <AcUnitIcon
+            onClick={toggleSidebar}
+            style={{ margin: '8px', zIndex: 25, cursor: 'pointer' }}
+          />
+        )}
       </ManageIconWrapper>
     </Container>
   );
