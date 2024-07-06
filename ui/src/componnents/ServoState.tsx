@@ -16,7 +16,7 @@ const SwitchWrapper = styled.div`
   display: flex;
 `;
 
-const names = ['Sypialnia', 'Pokój', 'Pokój Leny'];
+const names = ['Sypialnia', 'Pokój', 'Pokój Laury'];
 
 interface Props {
   servo: ServoDto;
