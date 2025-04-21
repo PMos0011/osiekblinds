@@ -4,19 +4,13 @@ import styled from 'styled-components';
 import { fonts } from '../assets/fonts';
 import { ServoDto } from '../tools/commonDtos';
 import { useContent } from './ContentProvider';
-import ScheduleSwitch from './ScheduleSwitch';
 
 const TextWrapper = styled.div`
   font-family: ${fonts.main};
   font-size: 3vw;
 `;
 
-const SwitchWrapper = styled.div`
-  margin-top: 5vh;
-  display: flex;
-`;
-
-const names = ['Sypialnia', 'Pokój', 'Pokój Laury'];
+const names = ['Sypialnia', 'Pokój', 'Pokój Laury', 'Dom'];
 
 interface Props {
   servo: ServoDto;
@@ -27,7 +21,6 @@ const ServoState = ({ servo }: Props) => {
   const [disabled, setDisabled] = useState(false);
   const [changeInterval, setChangeInterval] = useState<number | undefined>();
   const [responseInterval, setResponseInterval] = useState<number | undefined>();
-  const [flor, setFlor] = useState(false);
 
   const { setServoState } = useContent();
 
@@ -41,17 +34,10 @@ const ServoState = ({ servo }: Props) => {
   };
 
   useEffect(() => {
-    if (flor) setState(100);
-    else setState(0);
-  }, [flor]);
-
-  useEffect(() => {
     setState(servo.state);
     setDisabled(false);
     if (responseInterval) window.clearTimeout(responseInterval);
     setResponseInterval(undefined);
-
-    if (servo.id === 4) setFlor(servo.state === 100);
   }, [servo.state]);
 
   useEffect(() => {
@@ -80,30 +66,16 @@ const ServoState = ({ servo }: Props) => {
 
   return (
     <>
-      {label ? (
-        <>
-          <TextWrapper>{label}</TextWrapper>
-          <Slider
-            onChange={(e, val) => setState(val as number)}
-            value={state}
-            max={100}
-            min={0}
-            step={25}
-            disabled={disabled}
-            valueLabelDisplay="auto"
-          />
-        </>
-      ) : (
-        <SwitchWrapper>
-          <TextWrapper>Parter</TextWrapper>
-          <ScheduleSwitch
-            disabled={disabled}
-            isEnabled={flor}
-            toggleEnabled={() => setFlor(!flor)}
-          />
-          <TextWrapper>Piętro</TextWrapper>
-        </SwitchWrapper>
-      )}
+      <TextWrapper>{label}</TextWrapper>
+      <Slider
+        onChange={(e, val) => setState(val as number)}
+        value={state}
+        max={100}
+        min={0}
+        step={10}
+        disabled={disabled}
+        valueLabelDisplay="auto"
+      />
     </>
   );
 };
