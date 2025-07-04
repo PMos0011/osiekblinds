@@ -68,8 +68,7 @@ public class ServoComponent {
         if (servo.getId() < 0
                 || servo.getId() > SERVO_COUNT - 1
                 || servo.getState() < SERVO_MIN_VAL
-                || servo.getState() > SERVO_MAX_VAL
-                || (servo.getId() == SERVO_COUNT - 1 && !(servo.getState() == SERVO_MIN_VAL || servo.getState() == SERVO_MAX_VAL))) {
+                || servo.getState() > SERVO_MAX_VAL) {
             simpMessagingTemplate.convertAndSend("/servo/state", objectMapper.writeValueAsString(servos));
             return;
         }
