@@ -17,6 +17,7 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -42,9 +43,15 @@ public class ServoComponent {
             HttpResponse<String> response = servoService.getServoState();
             if (response.statusCode() != 200)
                 servos = new ArrayList<>();
-            else
-                servos = objectMapper.readValue(response.body(), new TypeReference<>() {
+            else {
+                List<ServoDto> servosTmp = new ArrayList<>();
+                servosTmp = objectMapper.readValue(response.body(), new TypeReference<>() {
                 });
+                servos = servosTmp.stream().map(s -> new ServoDto(s.getId(), 100 - s.getState()))
+                        .collect(Collectors.toList());
+            }
+
+
         } catch (Exception e) {
             servos = new ArrayList<>();
         } finally {
@@ -79,8 +86,8 @@ public class ServoComponent {
         }
 
         try {
-            ServoDto toSend = new ServoDto(servo.getId(), 100 - servo.getState());
-            HttpResponse<String> response = servoService.setServoState(toSend);
+            ServoDto dto = new ServoDto(servo.getId(), 100 - servo.getState());
+            HttpResponse<String> response = servoService.setServoState(dto);
             if (response.statusCode() != 200) {
                 getServoState();
                 return;
