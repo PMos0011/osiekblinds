@@ -80,10 +80,10 @@ public class ServoComponent {
             return;
         }
 
-        if (!calculateSpace(servo)) {
-            simpMessagingTemplate.convertAndSend("/servo/state", objectMapper.writeValueAsString(servos));
-            return;
-        }
+//        if (!calculateSpace(servo)) {
+//            simpMessagingTemplate.convertAndSend("/servo/state", objectMapper.writeValueAsString(servos));
+//            return;
+//        }
 
         try {
             ServoDto dto = new ServoDto(servo.getId(), 100 - servo.getState());
