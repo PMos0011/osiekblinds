@@ -79,7 +79,8 @@ public class ServoComponent {
         }
 
         try {
-            HttpResponse<String> response = servoService.setServoState(servo);
+            ServoDto toSend = new ServoDto(servo.getId(), 100 - servo.getState());
+            HttpResponse<String> response = servoService.setServoState(toSend);
             if (response.statusCode() != 200) {
                 getServoState();
                 return;
